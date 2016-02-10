@@ -2,7 +2,7 @@
 
 To use, put the following in you index.js file. 
 
-    var server = require('./okie-serv/server.js'); 
+    var server = require('./okie-serv/server.js').server; 
 
     // optional - port number to listen on
     var portNumber = 8020                 
