@@ -1,7 +1,7 @@
 /* jshint node: true */
 'use strict';
 
-exports = (function(listenOnPort, defaultPage) {
+exports.server = (function(listenOnPort, defaultPage) {
   const http = require("http"),
         path = require("path"),
         url = require("url"),
@@ -47,7 +47,6 @@ exports = (function(listenOnPort, defaultPage) {
       }
     });
   };
-
 
   return {
     start: function(listenOnPort) {
