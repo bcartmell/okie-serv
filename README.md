@@ -3,6 +3,11 @@
 To use, put the following in you index.js file. 
 
     var server = require('./okie-serv/server.js'); 
-    var portNumber = 8020                 // optional - port number to listen on
-    var defaultPage = 'resume.html';      // optional - default page (if not index.html)
+
+    // optional - port number to listen on
+    var portNumber = 8020                 
+
+    // optional - default page (if not index.html)
+    var defaultPage = 'resume.html';      
+
     server.server.start(portNumber, defaultPage);
