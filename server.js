@@ -2,8 +2,7 @@
 'use strict';
 
 exports = (function(listenOnPort, defaultPage) {
-  const sys = require("sys"),
-        http = require("http"),
+  const http = require("http"),
         path = require("path"),
         url = require("url"),
         filesys = require("fs"),
@@ -11,6 +10,16 @@ exports = (function(listenOnPort, defaultPage) {
 
   listenOnPort = listenOnPort || 8080;
   defaultPage = defaultPage || 'index.html';
+
+  var serverInstance = http.createServer((request,response) => {
+    var requestedPath = url.parse(request.url).pathname;
+
+    if (request.method === 'POST') postHandler(request, response);
+    if (requestedPath == "/") requestedPath = defaultPage;
+
+    var fullPath = path.join(process.cwd(),requestedPath);
+    fetchFile(fullPath, response);
+  });
 
   function respond404(response) {
     response.writeHeader(404, {"Content-Type": "text/plain"});
@@ -39,24 +48,15 @@ exports = (function(listenOnPort, defaultPage) {
     });
   };
 
-  var serverInstance = http.createServer((request,response) => {
-    var requestedPath = url.parse(request.url).pathname;
-
-    if (request.method === 'POST') postHandler(request, response);
-    if (requestedPath == "/") requestedPath = defaultPage;
-
-    var fullPath = path.join(process.cwd(),requestedPath);
-    fetchFile(fullPath, response);
-  });
 
   return {
     start: function(listenOnPort) {
       serverInstance.listen(listenOnPort, ()=> {
-        sys.puts("Server Running on " + listenOnPort);			
+        console.log("Server Running on " + listenOnPort);			
       });
     },
     stop: function() {
-      serverInstance.close( ()=> { sys.puts('Server closed.'); });
+      serverInstance.close( ()=> { console.log('Server closed.'); });
     }
   };
 }());
