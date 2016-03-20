@@ -1,21 +1,22 @@
-/* jshint node: true */
+/* jshint esversion: 6, node: true */
 'use strict';
 
 exports.server = (function(listenOnPort, defaultPage) {
-  const http = require("http"),
-        path = require("path"),
-        url = require("url"),
-        filesys = require("fs"),
-        mime = require("./serverModules/mime.js");
+  const http = require("http");
+  const path = require("path");
+  const url = require("url");
+  const filesys = require("fs");
+  const mime = require("./serverModules/mime.js");
+  const router = require("./serverModules/router.js");
 
   listenOnPort = listenOnPort || 8080;
   defaultPage = defaultPage || 'index.html';
 
   var serverInstance = http.createServer((request,response) => {
-    var requestedPath = url.parse(request.url).pathname;
-
+    var requestedPath = router.route(request.url) || url.parse(request.url).pathname;
     if (request.method === 'POST') postHandler(request, response);
-    if (requestedPath == "/") requestedPath = defaultPage;
+
+    // if (requestedPath == "/") requestedPath = defaultPage;
 
     var fullPath = path.join(process.cwd(),requestedPath);
     fetchFile(fullPath, response);
@@ -31,7 +32,7 @@ exports.server = (function(listenOnPort, defaultPage) {
     request.on('data', function(data) {
       process.stdout.write('received post data: \n'+ data);
     });
-  };
+  }
 
   function fetchFile(fullPath, response) {
     filesys.readFile(fullPath, "binary", function(err, file) {
@@ -46,7 +47,7 @@ exports.server = (function(listenOnPort, defaultPage) {
         response.end();
       }
     });
-  };
+  }
 
   return {
     start: function(listenOnPort) {
